@@ -1,0 +1,32 @@
+# ------------------- shyftnetwork testnet Service ------------------- #
+
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    k8s-app: shyftnetwork-testnet
+  name: shyftnetwork-testnet
+spec:
+  externalTrafficPolicy: Local
+  ports:
+    # - port: 8545
+    #   targetPort: 8545
+    #   nodePort: 8545
+    #   name: http-8545
+    # - port: 8546
+    #   targetPort: 8546
+    #   nodePort: 8546
+    #   name: http-8546
+    - name: tcp-31333
+      port: 31333
+      targetPort: 31333
+      nodePort: 31333
+      protocol: TCP
+    - name: udp-31333
+      port: 31333
+      targetPort: 31333
+      nodePort: 31333
+      protocol: UDP   
+  selector:
+    k8s-app:  shyftnetwork-testnet
+  type: NodePort

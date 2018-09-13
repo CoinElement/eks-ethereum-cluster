@@ -1,0 +1,44 @@
+# ------------------- shyftnetwork pg ------------------- #
+kind: Deployment
+apiVersion: apps/v1beta2
+metadata:
+  labels:
+    k8s-app: shyftnetwork-pg
+  name: shyftnetwork-pg
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      k8s-app: shyftnetwork-pg
+  template:
+    metadata:
+      labels:
+        k8s-app: shyftnetwork-pg
+    spec:
+      containers:
+      - name: shyftnetwork-pg
+        image: shyftnetwork/pg:0.1
+        ports:
+        - containerPort: 5432
+        env:
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: docker
+
+---
+# ------------------- shyftnetwork pg Service ------------------- #
+
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    k8s-app: shyftnetwork-pg
+  name: pg
+spec:
+  ports:
+    - port: 5432
+      targetPort: 5432
+  selector:
+    k8s-app:  shyftnetwork-pg

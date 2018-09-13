@@ -1,0 +1,56 @@
+# ------------------- shyftnetwork Deployment ------------------- #
+
+kind: Deployment
+apiVersion: apps/v1beta2
+metadata:
+  labels:
+    k8s-app: shyftnetwork-testnet
+  name: shyftnetwork-testnet
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      k8s-app: shyftnetwork-testnet
+  template:
+    metadata:
+      labels:
+        k8s-app: shyftnetwork-testnet
+    spec:
+      hostNetwork: true
+      containers:
+      - name: shyftnetwork-testnet
+        image: shyftnetwork/testnet:0.1
+        command: [ "sh", "-c"]
+        args:
+        - 'cd /go/src/github.com/ShyftEthereum/go-empyrean &&
+            ./wait-for.sh 127.0.0.1:5432 &&
+            ./shyft-cli/initShyftGeth.sh &&
+            ./shyft-cli/startShyftGeth.sh'
+        ports:
+          - containerPort: 8545
+            # hostPort: 8545
+            name: http-8545
+          - containerPort: 8546
+            # hostPort: 8546
+            name: http-8546
+          - containerPort: 31333
+            # hostPort: 31333
+            name: 31333-tcp
+            protocol: TCP
+          - containerPort: 31333
+            # hostPort: 31333
+            name: 31333-udp
+            protocol: UDP
+        # env:
+          # - name: DBENV
+            # value: "docker"
+      - name: shyftnetwork-pg
+        image: shyftnetwork/pg:0.1
+        ports:
+        - containerPort: 5432
+        env:
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: docker

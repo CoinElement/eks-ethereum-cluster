@@ -1,0 +1,38 @@
+# ------------------- shyftnetwork Deployment ------------------- #
+
+kind: Deployment
+apiVersion: v1
+metadata:
+  labels:
+    app: shyftgeth
+  name: shyftgeth-standalone
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: shyftgeth
+  template:
+    metadata:
+      labels:
+        app: shyftgeth
+    spec:
+      containers:
+      - name: shyftnetwork-testnet
+        image: shyftnetwork/testnet:standalone
+        command: [ "sh", "-c"]
+        args:
+        - 'cd /go/src/github.com/ShyftEthereum/go-empyrean &&
+            ./shyft-cli/initShyftGeth.sh &&
+            /bin/geth --config config.toml --bootnodes enode://db9636cf1e8a61c0d55301f4f92b49576f48bc793b87bc23acb2b95a1bfe3ba4404f8ca5ef8fe7539a587bdcecbec72aacfc3c067d426b488ede0afec291a225@18.136.86.171:31333'
+        ports:
+#          - containerPort: 8545
+#            hostPort: 9545
+#            name: http-8545
+#          - containerPort: 8546
+#            hostPort: 9546
+#            name: http-8546
+          - containerPort: 31333
+            hostPort: 31333
+            name: 31333-tcp
+            protocol: TCP
